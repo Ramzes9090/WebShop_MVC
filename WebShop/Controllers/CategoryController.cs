@@ -15,5 +15,9 @@ namespace WebShop.Controllers
             var objCatergoryList = _db.Categories.ToList();
             return View(objCatergoryList);
         }
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
