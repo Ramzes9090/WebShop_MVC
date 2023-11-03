@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WebShop.DataAccess.Repository.IRepository;
 using WebShop.Models;
 
@@ -15,10 +16,20 @@ namespace WebShop.Areas.Admin.Controllers
         public IActionResult Index()
         {
             var objProductList = _unitOfWork.Product.GetAll().ToList();
+            
             return View(objProductList);
         }
         public IActionResult Create()
         {
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+                .Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+            ViewBag.CategoryList = CategoryList;
+            //ViewData[nameof(CategoryList)] = CategoryList;
+
             return View();
         }
         [HttpPost]
