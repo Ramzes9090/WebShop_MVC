@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace WebShop.Models
 {
@@ -39,8 +40,10 @@ namespace WebShop.Models
         public double Price100 { get; set; }
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
+        [ValidateNever]
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+        [ValidateNever]
         public string ImageUrl { get; set; }
     }
 }
