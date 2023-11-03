@@ -3,18 +3,19 @@ using WebShop.DataAccess.Data;
 using WebShop.DataAccess.Repository.IRepository;
 using WebShop.Models;
 
-namespace WebShop.Controllers
+namespace WebShop.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _categoryRepo;
-        public CategoryController(ICategoryRepository db)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _categoryRepo = db;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var objCatergoryList = _categoryRepo.GetAll().ToList();
+            var objCatergoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCatergoryList);
         }
         public IActionResult Create()
@@ -28,25 +29,26 @@ namespace WebShop.Controllers
             {
                 ModelState.AddModelError("name", "The Display Order cannot match the Category Name.");
             }
-            if (ModelState.IsValid) {
-                _categoryRepo.Add(obj);
-                _categoryRepo.Save();
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.Category.Add(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             return View();
-            
-            
+
+
         }
         public IActionResult Edit(int? id)
         {
-            if(id == null || id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _categoryRepo.Get(x => x.Id == id);
+            Category? categoryFromDb = _unitOfWork.Category.Get(x => x.Id == id);
 
-            if(categoryFromDb == null)
+            if (categoryFromDb == null)
             {
                 return NotFound();
             }
@@ -57,8 +59,8 @@ namespace WebShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _categoryRepo.Update(obj);
-                _categoryRepo.Save();
+                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -70,7 +72,7 @@ namespace WebShop.Controllers
             {
                 return NotFound();
             }
-            Category categoryFromDb = _categoryRepo.Get(x => x.Id == id);
+            Category categoryFromDb = _unitOfWork.Category.Get(x => x.Id == id);
 
             if (categoryFromDb == null)
             {
@@ -81,13 +83,13 @@ namespace WebShop.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category obj = _categoryRepo.Get(x => x.Id == id);
+            Category obj = _unitOfWork.Category.Get(x => x.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _categoryRepo.Remove(obj);
-            _categoryRepo.Save();
+            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
